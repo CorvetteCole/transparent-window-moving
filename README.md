@@ -1,4 +1,6 @@
-# transparent-window-moving
+# transparent-blur-window-moving
+Now with added blur!
+
 GNOME Shell Extension. 
 
 Makes the window semi-transparent when moving or resizing.
