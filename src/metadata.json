@@ -6,6 +6,6 @@
 	"settings-schema": "org.gnome.shell.extensions.transparent-window-moving",
 	"description": "Makes the window semi-transparent and blurry when moving or resizing", 
 	"url": "https://github.com/corvettecole/transparent-window-moving", 
-	"version": 6,
+	"version": 7,
 	"shell-version": ["3.36", "3.36"]
 }

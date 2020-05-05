@@ -123,8 +123,11 @@ function window_grab_begin(meta_display, meta_screen, meta_window, meta_grab_op,
     _WindowState[pid] = state;
   }
   
-  let blur = new Shell.BlurEffect({ sigma: 10, mode: Shell.BlurMode.BACKGROUND });
-  window_actor.add_effect_with_name('blur-effect', blur);
+  if (_settings.get_boolean('blur')) {
+    let sigma_value = _settings.get_int('blur-intensity');
+    let blur = new Shell.BlurEffect({ sigma: sigma_value, mode: Shell.BlurMode.BACKGROUND });
+    window_actor.add_effect_with_name('blur-effect', blur);
+  }
 
   let opacity_value = _settings.get_int('window-opacity');
   set_opacity(window_actor, opacity_value);
