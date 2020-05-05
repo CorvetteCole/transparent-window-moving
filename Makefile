@@ -1,5 +1,5 @@
 #=============================================================================
-UUID=transparent-window-moving@noobsai.github.com
+UUID=transparent-window-moving@corvettecole.github.com
 SRCDIR=src
 BUILDDIR=build
 EXTENSIONDIR=~/.local/share/gnome-shell/extensions

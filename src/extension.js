@@ -1,6 +1,7 @@
 const Tweener = imports.ui.tweener;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
+const Shell = imports.gi.Shell;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -68,7 +69,7 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
     }
   };
 
-  if (transition_time < 0.001) { 
+  if (transition_time < 0.001) {  	
     window_surface.opacity = target_opacity;
     complete_func();
   } else {
@@ -121,6 +122,9 @@ function window_grab_begin(meta_display, meta_screen, meta_window, meta_grab_op,
     state = { thread: -1, original_opacity: window_surface.opacity }
     _WindowState[pid] = state;
   }
+  
+  let blur = new Shell.BlurEffect({ sigma: 10, mode: Shell.BlurMode.BACKGROUND });
+  window_actor.add_effect_with_name('blur-effect', blur);
 
   let opacity_value = _settings.get_int('window-opacity');
   set_opacity(window_actor, opacity_value);
@@ -133,9 +137,9 @@ function window_grab_end(meta_display, meta_screen, meta_window, meta_grab_op, g
 
   let window_actor = meta_window.get_compositor_private();
   let pid = meta_window.get_pid();
-
+  
   let state = _WindowState[pid];
-  set_opacity(window_actor, state.original_opacity, function() { delete _WindowState[pid]; }, true);
+  set_opacity(window_actor, state.original_opacity, function() { window_actor.remove_effect_by_name('blur-effect'); delete _WindowState[pid]; }, true);
 }
 
 function enable() {
