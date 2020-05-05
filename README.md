@@ -3,14 +3,21 @@ Now with added blur! - Cole
 
 GNOME Shell Extension. 
 
-Makes the window semi-transparent when moving or resizing.
+Makes the window semi-transparent and blurred when moving or resizing.
 
 Should be compatible with other extensions that change the transparency of windows.
 
 Inspired by GhostWin application.
 
-## Installation from repository
-~[Gnome Shell Extensions page](https://extensions.gnome.org/extension/1446/transparent-window-moving/)~
+## Blur info
+Here are the notable bits of code that do blur things:
+
+```
+let blur = new Shell.BlurEffect({ sigma: 10, mode: Shell.BlurMode.BACKGROUND });
+window_actor.add_effect_with_name('blur-effect', blur); 
+  
+window_actor.remove_effect_by_name('blur-effect');
+```
 
 ## Installation from git
 ```bash
