@@ -94,10 +94,10 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
 
 function set_blur(window_actor, meta_window, blurred) {
 	if (blurred) {
-		let offsetYPixelBugFix = 10;
-		if (meta_window.get_gtk_application_id() == null){
-			offsetYPixelBugFix = 0;
-		}
+		let offsetYPixelBugFix = 0;
+//		if (meta_window.get_gtk_application_id() != null){
+//			offsetYPixelBugFix = 10;
+//		}
 	
 		let sigma_value = _settings.get_int('blur-intensity');
 		let blur = new Shell.BlurEffect({ sigma: sigma_value, mode: Shell.BlurMode.BACKGROUND });
