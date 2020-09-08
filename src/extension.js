@@ -1,4 +1,3 @@
-const Tweener = imports.ui.tweener;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
 const Shell = imports.gi.Shell;
@@ -75,9 +74,9 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
     window_surface.opacity = target_opacity;
     complete_func();
   } else {
-    Tweener.addTween(window_surface, {
-        time: transition_time,
-        transition: 'easeOutQuad',
+    window_surface.ease({
+        duration: transition_time * 1000,
+        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
         opacity: target_opacity,
         onComplete: complete_func
     });
