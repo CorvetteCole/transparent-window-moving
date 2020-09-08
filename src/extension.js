@@ -94,6 +94,11 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
 
 function set_blur(window_actor, meta_window, blurred) {
 	if (blurred) {
+		let offsetYPixelBugFix = 10;
+		if (meta_window.get_gtk_application_id() == null){
+			offsetYPixelBugFix = 0;
+		}
+	
 		let sigma_value = _settings.get_int('blur-intensity');
 		let blur = new Shell.BlurEffect({ sigma: sigma_value, mode: Shell.BlurMode.BACKGROUND });
 		
@@ -106,7 +111,7 @@ function set_blur(window_actor, meta_window, blurred) {
 		let offsetY = window_actor.get_height() - frame.height;
 		
 		let constraintPosX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.X, offset: offsetX / 2.0});
-		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY / 2.0 - 10});
+		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY / 2.0 - offsetYPixelBugFix});
 		
 		let constraintSizeX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.WIDTH, offset: -offsetX});
 		let constraintSizeY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.HEIGHT, offset: -offsetY});
