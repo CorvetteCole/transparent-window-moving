@@ -94,24 +94,22 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
 
 function set_blur(window_actor, meta_window, blurred) {
 	if (blurred) {
-		let offsetYPixelBugFix = 0;
-//		if (meta_window.get_gtk_application_id() != null){
-//			offsetYPixelBugFix = 10;
-//		}
-	
 		let sigma_value = _settings.get_int('blur-intensity');
 		let blur = new Shell.BlurEffect({ sigma: sigma_value, mode: Shell.BlurMode.BACKGROUND });
 		
 		let frame = meta_window.get_frame_rect();
+		let buffer = meta_window.get_buffer_rect();
 		
-		let offsetX = window_actor.get_width() - frame.width;
-		let offsetY = window_actor.get_height() - frame.height;
+		const offsetX = frame.x - buffer.x;
+		const offsetY = frame.y - buffer.y;
+		const offsetWidth = buffer.width - frame.width;
+		const offsetHeight = buffer.height - frame.height;
 		
-		let constraintPosX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.X, offset: offsetX / 2.0});
-		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY / 2.0 - offsetYPixelBugFix});
+		let constraintPosX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.X, offset: offsetX});
+		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY});
 		
-		let constraintSizeX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.WIDTH, offset: -offsetX});
-		let constraintSizeY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.HEIGHT, offset: -offsetY});
+		let constraintSizeX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.WIDTH, offset: -offsetWidth});
+		let constraintSizeY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.HEIGHT, offset: -offsetHeight});
 		
 		_blurActor = new Clutter.Actor();
 		_blurActor.add_constraint(constraintPosX);
