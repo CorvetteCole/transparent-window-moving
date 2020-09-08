@@ -2,6 +2,7 @@ const Tweener = imports.ui.tweener;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
 const Shell = imports.gi.Shell;
+const Clutter = imports.gi.Clutter;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -9,6 +10,7 @@ const Convenience = Me.imports.convenience;
 
 let _settings = null;
 let _WindowState;
+let _blurActor = null;
 
 let _on_window_grab_begin, _on_window_grab_end;
 let _on_move_changed, _on_resize_changed;
@@ -90,6 +92,39 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
   }
 }
 
+function set_blur(window_actor, meta_window, blurred) {
+	if (blurred) {
+		let sigma_value = _settings.get_int('blur-intensity');
+		let blur = new Shell.BlurEffect({ sigma: sigma_value, mode: Shell.BlurMode.BACKGROUND });
+		
+		let frame = meta_window.get_frame_rect();
+		
+		log("frame width: " + frame.width + "window_actor width: " + window_actor.get_width());
+		log("frame height: " + frame.height + "window_actor height: " + window_actor.get_height());
+		
+		let offsetX = window_actor.get_width() - frame.width;
+		let offsetY = window_actor.get_height() - frame.height;
+		
+		let constraintPosX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.X, offset: offsetX / 2.0});
+		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY / 2.0});
+		
+		let constraintSizeX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.WIDTH, offset: -offsetX});
+		let constraintSizeY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.HEIGHT, offset: -offsetY});
+		
+		_blurActor = new Clutter.Actor();
+		_blurActor.add_constraint(constraintPosX);
+		_blurActor.add_constraint(constraintPosY);
+		_blurActor.add_constraint(constraintSizeX);
+		_blurActor.add_constraint(constraintSizeY);
+	   
+		_blurActor.add_effect_with_name('blur-effect', blur);
+		
+		global.window_group.insert_child_below(_blurActor, window_actor);
+    } else {
+    	global.window_group.remove_actor(_blurActor);
+    }
+}
+
 function set_timeout(func, time){
   GLib.timeout_add(GLib.PRIORITY_DEFAULT, time, function() {
     func();
@@ -124,9 +159,7 @@ function window_grab_begin(meta_display, meta_screen, meta_window, meta_grab_op,
   }
   
   if (_settings.get_boolean('blur')) {
-    let sigma_value = _settings.get_int('blur-intensity');
-    let blur = new Shell.BlurEffect({ sigma: sigma_value, mode: Shell.BlurMode.BACKGROUND });
-    window_actor.add_effect_with_name('blur-effect', blur);
+		set_blur(window_actor, meta_window, true);
   }
 
   let opacity_value = _settings.get_int('window-opacity');
@@ -142,7 +175,7 @@ function window_grab_end(meta_display, meta_screen, meta_window, meta_grab_op, g
   let pid = meta_window.get_pid();
   
   let state = _WindowState[pid];
-  set_opacity(window_actor, state.original_opacity, function() { window_actor.remove_effect_by_name('blur-effect'); delete _WindowState[pid]; }, true);
+  set_opacity(window_actor, state.original_opacity, function() { set_blur(window_actor, meta_window, false); delete _WindowState[pid]; }, true);
 }
 
 function enable() {
