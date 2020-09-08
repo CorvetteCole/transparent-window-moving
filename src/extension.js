@@ -1,12 +1,9 @@
-const Tweener = imports.ui.tweener;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
 const Shell = imports.gi.Shell;
 const Clutter = imports.gi.Clutter;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 
 let _settings = null;
 let _WindowState;
@@ -75,9 +72,9 @@ function set_opacity(window_actor, target_opacity, on_complete, check_if_complet
     window_surface.opacity = target_opacity;
     complete_func();
   } else {
-    Tweener.addTween(window_surface, {
-        time: transition_time,
-        transition: 'easeOutQuad',
+    window_surface.ease({
+        duration: transition_time * 1000,
+        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
         opacity: target_opacity,
         onComplete: complete_func
     });
@@ -179,7 +176,7 @@ function window_grab_end(meta_display, meta_screen, meta_window, meta_grab_op, g
 }
 
 function enable() {
-  _settings = Convenience.getSettings();
+  _settings = ExtensionUtils.getSettings();
   init_grab_operations();
   _WindowState = {};
   _on_window_grab_begin = global.display.connect('grab-op-begin', window_grab_begin);
@@ -200,5 +197,5 @@ function disable() {
 }
 
 function init() {
-  Convenience.initTranslations();
+  ExtensionUtils.initTranslations();
 }
