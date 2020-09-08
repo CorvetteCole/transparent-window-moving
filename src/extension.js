@@ -106,7 +106,7 @@ function set_blur(window_actor, meta_window, blurred) {
 		let offsetY = window_actor.get_height() - frame.height;
 		
 		let constraintPosX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.X, offset: offsetX / 2.0});
-		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY / 2.0});
+		let constraintPosY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.Y, offset: offsetY / 2.0 - 10});
 		
 		let constraintSizeX = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.WIDTH, offset: -offsetX});
 		let constraintSizeY = new Clutter.BindConstraint({ source: window_actor, coordinate: Clutter.BindCoordinate.HEIGHT, offset: -offsetY});
