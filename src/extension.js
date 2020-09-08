@@ -4,8 +4,6 @@ const Shell = imports.gi.Shell;
 const Clutter = imports.gi.Clutter;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 
 let _settings = null;
 let _WindowState;
@@ -180,7 +178,7 @@ function window_grab_end(meta_display, meta_screen, meta_window, meta_grab_op, g
 }
 
 function enable() {
-  _settings = Convenience.getSettings();
+  _settings = ExtensionUtils.getSettings();
   init_grab_operations();
   _WindowState = {};
   _on_window_grab_begin = global.display.connect('grab-op-begin', window_grab_begin);
@@ -201,5 +199,5 @@ function disable() {
 }
 
 function init() {
-  Convenience.initTranslations();
+  ExtensionUtils.initTranslations();
 }
