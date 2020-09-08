@@ -104,9 +104,6 @@ function set_blur(window_actor, meta_window, blurred) {
 		
 		let frame = meta_window.get_frame_rect();
 		
-		log("frame width: " + frame.width + "window_actor width: " + window_actor.get_width());
-		log("frame height: " + frame.height + "window_actor height: " + window_actor.get_height());
-		
 		let offsetX = window_actor.get_width() - frame.width;
 		let offsetY = window_actor.get_height() - frame.height;
 		
@@ -196,9 +193,10 @@ function enable() {
 function disable() {
   global.display.disconnect(_on_window_grab_begin);
   global.display.disconnect(_on_window_grab_end);
+  global.window_group.remove_actor(_blurActor);
   _settings.disconnect(_on_move_changed);
   _settings.disconnect(_on_resize_changed);
-
+	
   _WindowState = {};
   _settings.run_dispose();
 }
